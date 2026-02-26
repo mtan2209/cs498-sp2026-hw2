@@ -1,0 +1,12 @@
+Part IV-A Results (averages):
+A(us-central1) /register avg: 56.39 ms
+B(europe-west1) /register avg: 333.87 ms
+A(us-central1) /list avg:     60.15 ms
+B(europe-west1) /list avg:     329.95 ms
+
+Part IV-B Eventual Consistency Misses: 10 / 100
+
+Findings Discussion:
+The latencies are different because of the geographic locations. The US location is much closer to my device than the European one. So, the pings to the US instance will have a much faster round-trip time. This is because of pure distance for the packets to travel, as well as the network routing. The European-destined packet will have to be routed through more points, and bounced around more, as well as pass through things like different Automonated Systems and BGP. The write operations are also generally slower than the read operations (/register vs. /list) since writes need data to be committed and confirmed by the distributed storage system while reads just need it to return existing data. So there's more overhead for writes, hence the longer latencies.
+
+For the consistency experiment, there can be a delay in eventual consistency as it takes time for the distributed system to fully replicate the changes made by the new username. As a result, sometimes, there will be a lag when querying the second instance resulting in stale or incorrect data from the perspective of someone who knows new data was added. This is because the replica for that instance might not have received the update yet. After some time, this will be fixed and the changes will be there. Furthermore, index entries which is what /list uses, might need time to update too. However, largely, this wasn't seen to be an issue as most of the time when querying the European instance, that trip time is longer than the milisconds it takes for replicas to converge.

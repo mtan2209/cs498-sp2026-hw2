@@ -1,0 +1,7 @@
+For server.js, I just followed the given code.
+
+For analysis.js, I first set up helper functions to get the current time for latency and to make get/post requests to the exposed endpoints. Then, to test latency,
+I did 10 register and list requests each to each VM instance, then averaged out the time right before and right after I made the request. To ensure the requests were
+completed, I used await and async functions. For the usernames, I simply had the name "John" with custom suffixes like numbers and the IP to make testing easy. For
+the eventual consistency tests, I sent a request to the Europe instance to register a name, then immediately did a get request from the US server and vice versa.
+Before each test, I cleared the database to clean it. 
